@@ -1,0 +1,27 @@
+{{extend 'layout.html'}}
+
+<h2 align="center">[Shell]</h2>
+
+    <script src="/fried/static/js/jquery-1.5.min.js"></script>
+    <script src="/fried/static/js/jquery.mousewheel.min.js"></script>
+    <script src="/fried/static/js/jquery.terminal-0.4.3.js"></script>
+    <link href="/fried/static/css/jquery.terminal.css" rel="stylesheet"/>
+	<script src="/fried/static/js/dterm.js"></script>
+
+
+	<div id="term" align="left"></div>
+	 
+    <script>
+		    
+			$('#term').terminal("/fried/default/call/jsonrpc", {
+		        login: false,
+		        greetings: "Follow the white rabbit...",
+	        	width: 500,
+	            height: 320 
+		    });		    
+		    
+    </script>
+<!-- 
+<button id="open_term">open dialog</button>
+-->
+This is where shit goes down.... how did you stumble upon thee?
