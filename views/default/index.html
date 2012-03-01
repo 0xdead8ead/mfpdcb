@@ -1,0 +1,24 @@
+{{extend 'layout.html'}}
+
+<h1></h1>
+
+<div align="center">
+<img src="{{=URL('static','images/main.png')}}" width="450" height="400"/>
+</div>
+<div align="center" id="web2py_user_form">
+{{=form}}
+{{if request.args(0)=='login':}}
+{{if not 'register' in auth.settings.actions_disabled:}}
+<br/><a href="{{=URL(r=request,args='register')}}">register</a>
+{{pass}}
+{{if not 'request_reset_password' in auth.settings.actions_disabled:}}
+<br/><a href="{{=URL(r=request,args='request_reset_password')}}">lost password</a>
+{{pass}}
+{{pass}}
+</div>
+
+<script language="javascript">
+<!--
+ jQuery("#web2py_user_form input:visible:enabled:first").focus();
+//-->
+</script> 

@@ -1,0 +1,67 @@
+timestamp: 2011-11-15T03:15:17.993267
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username CHAR(512),
+    first_name CHAR(512),
+    last_name CHAR(512),
+    email CHAR(512),
+    password CHAR(512),
+    created_on TIMESTAMP,
+    modified_on TIMESTAMP,
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2011-11-15T03:15:17.999433
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2011-11-15T03:15:18.003044
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2011-11-15T03:15:18.006506
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2011-11-15T03:15:18.010426
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2011-11-15T03:15:18.014107
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    url CHAR(512),
+    uuid CHAR(512)
+);
+success!
+timestamp: 2011-11-20T02:34:42.902369
+CREATE TABLE machines(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname CHAR(512),
+    ipaddress CHAR(512),
+    online CHAR(1),
+    uuid CHAR(512),
+    os CHAR(512)
+);
+success!

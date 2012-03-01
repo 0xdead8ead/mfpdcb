@@ -1,0 +1,71 @@
+{{extend 'layout.html'}}
+
+<h2 align="center">[Machines]</h2>
+
+    <script src="/fried/static/js/jquery-1.5.min.js"></script>
+    <script src="/fried/static/js/jquery.mousewheel.min.js"></script>
+    <script src="/fried/static/js/jquery.terminal-0.4.3.js"></script>
+    <script src="/fried/static/js/dterm.js"></script>
+    <link href="/fried/static/css/jquery.terminal.css" rel="stylesheet"/>
+
+	
+
+<style type="text/css">
+p.message_head
+{
+border: solid 1px #FFFFFF;
+}
+</style>
+	
+	 
+    <script>
+		    
+    
+    $(document).ready(function(){
+    	
+    	//hide message_body after the first one
+    	$(".message_list .message_body").hide();
+    	
+    	//toggle message_body
+    	$(".message_head").click(function(){
+    		$(this).next(".message_body").slideToggle(500)
+    		return false;
+    	});
+	{{for index in range(len(machines)):}}
+    	$('#term{{=index}}').terminal("/fried/default/call/jsonrpc", {
+	        login: false,
+	        greetings: "Follow the white rabbit...",
+	    	width: 500,
+	        height: 320 
+	    });
+    {{pass}}
+    	
+
+    });
+
+    </script>
+    <script>
+		    
+    </script>
+   
+    
+	
+	<ol class="message_list">
+	
+	{{i=0}}
+	{{for machine in machines:}}
+	<li>
+		<p class="message_head">Hostname: <cite>{{=machine.hostname}}</cite> - {{=machine.ipaddress}} - {{=machine.os}}<span style="display: block; text-align: right;" class="status">Online</span></p>
+		<div class="message_body">
+			<div id="term{{=i}}" align="left"></div>
+		</div>
+	</li>
+	{{i += 1}}
+	{{pass}}
+	</ol>
+	
+	
+<!-- 
+<button id="open_term">open dialog</button>
+-->
+This is where shit goes down.... how did you stumble upon thee?
