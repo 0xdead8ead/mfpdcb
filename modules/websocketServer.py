@@ -1,11 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
 import tornado.web
 import time
-import urllib
 import optparse
 
+__author__ = "f47h3r - Chase Schultz"
 
 listeners = {}
 names = {}
@@ -24,6 +26,7 @@ class PostHandler(tornado.web.RequestHandler):
         return 'false'
     
 class DistributeHandler(tornado.websocket.WebSocketHandler):
+    ''' Registers boxes to groups and manages websockets '''
     def open(self,params):
         print 'Parameters: %s' % str(params)
         group,name = params.split('/')
@@ -38,6 +41,7 @@ class DistributeHandler(tornado.websocket.WebSocketHandler):
         print '%s:CONNECT to %s from %s' % (time.time(), self.group, self.name)
         
     def on_message(self, message):
+        ''' Sends Messages back to the shell interface '''
         print message
         for client in listeners.get("shell",[]): 
             client.write_message(message)
@@ -49,26 +53,9 @@ class DistributeHandler(tornado.websocket.WebSocketHandler):
         # notify clients that a member has left the groups
         for client in listeners.get(self.group,[]): client.write_message('-'+self.name)
         print '%s:DISCONNECT from %s' % (time.time(), self.group)
+'''
 
-class CommandHandler(tornado.websocket.WebSocketHandler):
-    
-    def __sendCommand__(self,url,message,group='boxes'):
-        params = urllib.urlencode({'message': message, 'group':group})
-        f = urllib.urlopen(url, params)
-        data= f.read()
-        f.close()
-        return data
-        
-    def open(self):
-        print 'new connection'
-        self.write_message("Welcome to the Shell...\n")
-        
-    def on_message(self, message):
-        print 'Command received:  %s' % message
-        self.__sendCommand__("http://127.0.0.1:9002", message)
-        
-    def on_close(self):
-        print 'connection closed'
+#Example Websocket Code
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
@@ -83,9 +70,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         print 'connection closed'
 
-
-
-
+'''
 
 if __name__ == "__main__":
     usage = __doc__
@@ -103,8 +88,8 @@ if __name__ == "__main__":
                       help='Listener IP address')
     (options, args) = parser.parse_args()
     application = tornado.web.Application([
-    (r'/ws', WSHandler),
-    (r'/command', CommandHandler),
+#For Example
+#    (r'/ws', WSHandler),
     (r'/', PostHandler),
     (r'/endpoint/(.*)', DistributeHandler),
     ])

