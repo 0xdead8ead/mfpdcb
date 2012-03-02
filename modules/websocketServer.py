@@ -2,9 +2,9 @@ import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
 import tornado.web
-import subprocess
 import time
 import urllib
+import optparse
 
 
 listeners = {}
@@ -84,15 +84,30 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print 'connection closed'
 
 
-application = tornado.web.Application([
+
+
+
+if __name__ == "__main__":
+    usage = __doc__
+    version= "0.01"
+    parser = optparse.OptionParser(usage, None, optparse.Option, version)
+    parser.add_option('-p',
+                      '--port',
+                      default='9002',
+                      dest='port',
+                      help='Listener Port')
+    parser.add_option('-l',
+                      '--listen',
+                      default='127.0.0.1',
+                      dest='ip',
+                      help='Listener IP address')
+    (options, args) = parser.parse_args()
+    application = tornado.web.Application([
     (r'/ws', WSHandler),
     (r'/command', CommandHandler),
     (r'/', PostHandler),
     (r'/endpoint/(.*)', DistributeHandler),
-])
-
-
-if __name__ == "__main__":
+    ])
     http_server = tornado.httpserver.HTTPServer(application)
-    http_server.listen(9002)
+    http_server.listen(int(options.port), address=options.ip)
     tornado.ioloop.IOLoop.instance().start()

