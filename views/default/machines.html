@@ -16,9 +16,45 @@ p.message_head
 border: solid 1px #FFFFFF;
 }
 </style>
-    
-     
-    <script>
+
+	<script>
+	
+		terminalInterface = null;
+    	var box1 = {
+    	  
+		  join : function(name) {
+		    this._username = name;
+		    var location = "ws://127.0.0.1:9002/endpoint/shell/box1";
+		    this._ws = new WebSocket(location, "chat");
+		    this._ws.onopen = this.onopen(name);
+		    this._ws.onmessage = this.onmessage;
+		    this._ws.onclose = this.onclose;
+		  },
+		 
+		  onopen : function(name) {
+		    <!--this.send('Hello from Shell - User '+name+' connected');-->
+		  },
+		  
+		  send : function(cmd) {
+		  	//Put Ajax Post Request HERE
+			var data = {message: cmd, group: "boxes"};
+			var myrequest =  $.ajax({
+			  url: "{{=URL('ajaxproxy')}}",
+			  data: data,
+			  type: "POST",
+			});
+		  },
+		  
+		  onmessage : function(m) {
+		    //Callback to Terminal Goes HERE
+		    terminalInterface.echo(m.data);
+		  },
+		  
+		  onclose : function(m) {
+		    this._ws = null;
+		  }
+		};
+		box1.join("f47h3r");
             
     
     $(document).ready(function(){
@@ -28,15 +64,18 @@ border: solid 1px #FFFFFF;
         
         //toggle message_body
         $(".message_head").click(function(){
-            $(this).next(".message_body").slideToggle(500)
+            $(this).next(".message_body").slideToggle(1000)
             return false;
         });
     {{for index in range(len(machines)):}}
-        $('#term{{=index}}').terminal("/mfpdcb/default/call/jsonrpc", {
+        $('#term{{=index}}').terminal(function(command, term) {			    
+			    box1.send(command);
+			    terminalInterface = term;
+			},{
             login: false,
             greetings: "Follow the white rabbit...",
-            width: 500,
-            height: 320 
+            width: 800,
+            height: 320
         });
     {{pass}}
         
@@ -44,9 +83,7 @@ border: solid 1px #FFFFFF;
     });
 
     </script>
-    <script>
-            
-    </script>
+
    
     
     

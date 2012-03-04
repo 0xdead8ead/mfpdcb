@@ -65,3 +65,9 @@ CREATE TABLE machines(
     os CHAR(512)
 );
 success!
+timestamp: 2012-03-03T21:02:24.973909
+ALTER TABLE auth_cas ADD service CHAR(512);
+timestamp: 2012-03-03T21:02:25.158239
+ALTER TABLE auth_cas ADD renew CHAR(1);
+timestamp: 2012-03-03T21:02:25.361130
+ALTER TABLE auth_cas ADD ticket CHAR(512);

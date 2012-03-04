@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
 ### required - do no delete
+import urllib
+
+class AjaxSender():
+    
+    def sendCommand(self,url,message,group='boxes'):
+        params = urllib.urlencode({'message': message, 'group':group})
+        try:
+            f = urllib.urlopen(url, params)
+        except IOError:
+            raise IOError('Connection To Listener Terminated. Exiting.')
+        f.read()
+        f.close()
+        pass
+
 
 def user(): return dict(form=auth())
 def download(): return response.download(request,db)
 def call(): return service()
 ### end requires
 def index():
-    
-
     return dict(form=auth())
 
 def clientdz():
@@ -29,11 +41,13 @@ def testing():
     ''')
     return dict(form=form, script=script)
 
-def ajax_form():
-    form=SQLFORM.factory(Field('message'))
-    if form.accepts(request,session):
-        comet_send('http://127.0.0.1:8888',form.vars.message,'mykey','mygroup')
-    return form
+def ajaxproxy():
+    url = 'http://127.0.0.1:9002/'
+    message = request.post_vars['message']
+    group = request.post_vars['group']
+    sender = AjaxSender();
+    sender.sendCommand(url, message, group)
+    return dict()
 
 @auth.requires_login()
 def shell():
