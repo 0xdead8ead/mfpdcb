@@ -21,6 +21,9 @@ class PostHandler(tornado.web.RequestHandler):
             message = self.request.arguments['message'][0]
             group = self.request.arguments.get('group',['default'])[0]
             print '%s:MESSAGE to %s:%s' % (time.time(), group, message)
+            
+            
+            #For every Client Listener in the group specified in post data
             for client in listeners.get(group,[]): client.write_message(message)
             return 'true'
         return 'false'
