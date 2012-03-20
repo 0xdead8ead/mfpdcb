@@ -29,9 +29,10 @@ class DistributeHandler(tornado.websocket.WebSocketHandler):
     ''' Registers boxes to groups and manages websockets '''
     def open(self,params):
         print 'Parameters: %s' % str(params)
-        group,name = params.split('/')
+        group,uuid,name = params.split('/')
         self.group = group or 'default'
         self.name = name or 'anonymous'
+        self.uuid = uuid or 'all'
         if not self.group in listeners: listeners[self.group]=[]
         # notify clients that a member has joined the groups
         for client in listeners.get(self.group,[]): 
