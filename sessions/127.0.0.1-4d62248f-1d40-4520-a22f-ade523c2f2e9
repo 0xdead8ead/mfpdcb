@@ -5,7 +5,7 @@ S'/mfpdcb/default/index'
 p3
 sS'_formkey[login]'
 p4
-S'9eb21758-a46e-4670-b227-d833ee50c43a'
+S'8cf54962-8481-4cf4-bf21-2e9d3020db7f'
 p5
 sS'auth'
 p6
@@ -21,7 +21,7 @@ p9
 (dp10
 S'hmac_key'
 p11
-S'03284d1b-9ca3-4831-8701-49e539c4c5ba'
+S'1e98776f-b56d-4588-80ca-37624514176f'
 p12
 sS'remember'
 p13
@@ -34,7 +34,7 @@ p15
 cdatetime
 datetime
 p16
-(S'\x07\xdc\x03\x05\n\x1c\x16\x00m\xe8'
+(S'\x07\xdc\x03\r\x1158\t\x91\xa0'
 tRp17
 sS'user'
 p18

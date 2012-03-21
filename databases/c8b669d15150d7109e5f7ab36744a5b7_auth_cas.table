@@ -23,6 +23,7 @@ sS'type'
 p12
 S'string'
 p13
+<<<<<<< HEAD
 sS'sql'
 p14
 S'CHAR(512)'
@@ -32,6 +33,17 @@ p16
 (dp17
 g4
 S'string'
+=======
+(dp14
+S'sortable'
+p15
+I4
+sS'type'
+p16
+S'string'
+p17
+sS'sql'
+>>>>>>> 881ec39d37df7880b9cc7459e8b33761e52edc80
 p18
 sg6
 I4
@@ -51,12 +63,21 @@ p22
 ssS'renew'
 p23
 (dp24
+<<<<<<< HEAD
 g4
 S'boolean'
 p25
 sg6
 I6
 sg7
+=======
+g15
+I6
+sg16
+S'boolean'
+p25
+sg18
+>>>>>>> 881ec39d37df7880b9cc7459e8b33761e52edc80
 S'CHAR(1)'
 p26
 ssS'created_on'
@@ -73,11 +94,19 @@ p30
 ssS'ticket'
 p31
 (dp32
+<<<<<<< HEAD
 g4
 g18
 sg6
 I5
 sg7
+=======
+g15
+I5
+sg16
+g17
+sg18
+>>>>>>> 881ec39d37df7880b9cc7459e8b33761e52edc80
 S'CHAR(512)'
 p33
 ssS'id'
