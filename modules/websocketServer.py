@@ -6,12 +6,39 @@ import tornado.ioloop
 import tornado.web
 import time
 import optparse
+import json
 
 __author__ = "f47h3r - Chase Schultz"
 
 listeners = {}
 names = {}
 
+class adminObject():
+    def __init__(self, boxUUID, websocketInstance):
+        self.uuid = boxUUID
+        self.webSocket = websocketInstance
+        
+    def webSocket(self):
+        return self.webSocket
+        
+    def uuid(self):
+        return self.uuid
+    
+class commandStructureObject():
+    def __init__(self, boxUUID, userName, websocketInstance):
+        self.uuid = boxUUID
+        self.webSocket = websocketInstance
+        self.username = userName
+        
+    def webSocket(self):
+        return self.webSocket
+    
+    def uuid(self):
+        return self.uuid
+    
+    def username(self):
+        return self.username
+        
 class PostHandler(tornado.web.RequestHandler):
     """
     Handles Posted Commands and Sends to Clients
@@ -25,21 +52,62 @@ class PostHandler(tornado.web.RequestHandler):
             
             #For every Client Listener in the group specified in post data
             for client in listeners.get(group,[]): client.write_message(message)
+            
+            websocket = listeners.get('admin',['default'])[0].webSocket
+            
+            print 'THE WEBSOCKET = \n\n'
+            print websocket
+            websocket.write_message(message)
             return 'true'
         return 'false'
+    
+class SpawnClientSocket(tornado.web.RequestHandler):
+    """
+    Handles Spawn of Shells
+    """
+    def post(self):
+        user = self.request.arguments['user']
+        
+        #construct JSON Object
+        data = [ { 'command':'spawnwebsocket', 'user':str(user)} ]
+        jsonObject = json.dumps(data)
+        
+        for client in listeners.get('admin',['default']):
+            websocket = client.webSocket
+            websocket.write_message(jsonObject)
+        #websocket = listeners.get('admin',['default'])[0].webSocket
+        
+        #print 'THE WEBSOCKET = \n\n'
+        #print websocket
+        
+        return 'true'
+
     
 class DistributeHandler(tornado.websocket.WebSocketHandler):
     ''' Registers boxes to groups and manages websockets '''
     def open(self,params):
         print 'Parameters: %s' % str(params)
-        group,name = params.split('/')
+        group, uuid, name = params.split('/')
         self.group = group or 'default'
+        self.uuid = uuid or 'fuck...no UUUID'
         self.name = name or 'anonymous'
+        
+        #If group isn't already in the list add it.
         if not self.group in listeners: listeners[self.group]=[]
-        # notify clients that a member has joined the groups
-        for client in listeners.get(self.group,[]): 
-            client.write_message('+'+self.name)
-        listeners[self.group].append(self)
+        
+        if group == 'admin':
+            listeners[group].append(adminObject(self.uuid, self))
+            pass
+        elif group == 'windows' or group == 'linux':
+            listeners[group].append(commandStructureObject(self.uuid, self.name, self))
+            pass
+        else:
+            # notify clients that a member has joined the groups
+            for client in listeners.get(self.group,[]): 
+                client.write_message('+'+self.name)
+                
+            #Append Websocket instance to group
+            listeners[self.group].append(self)
         names[self] = self.name
         print '%s:CONNECT to %s from %s' % (time.time(), self.group, self.name)
         
