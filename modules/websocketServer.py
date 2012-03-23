@@ -163,6 +163,7 @@ if __name__ == "__main__":
 #    (r'/ws', WSHandler),
     (r'/', PostHandler),
     (r'/endpoint/(.*)', DistributeHandler),
+    (r'/spawnshells', SpawnClientSocket)
     ])
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(int(options.port), address=options.ip)

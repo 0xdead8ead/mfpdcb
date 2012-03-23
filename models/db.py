@@ -4,6 +4,19 @@
 ## This scaffolding model makes your app work on Google App Engine too
 ## File is released under public domain and you can use without limitations
 #########################################################################
+import urllib
+
+class ajaxSender():
+    def setupShells(self,url, username):
+        params = urllib.urlencode({'user': username})
+        try:
+            f = urllib.urlopen(url, params)
+        except IOError:
+            raise IOError('Connection To Listener Terminated. Exiting.')
+        f.read()
+        f.close()
+        pass
+
 
 if not request.env.web2py_runtime_gae:     
     ## if NOT running on Google App Engine use SQLite or other DB
@@ -109,6 +122,8 @@ auth.settings.actions_disabled.append('register')
 auth.settings.actions_disabled.append('request_reset_password')
 auth.settings.actions_disabled.append('retrieve_username')
 auth.settings.remember_me_form = False
+ajax = ajaxSender();
+auth.settings.login_onaccept = [lambda form: ajax.setupShells('http://localhost:9002/spawnshells',auth.user.username)]
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
